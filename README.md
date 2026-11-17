@@ -5,19 +5,39 @@ This plugin interfaces Indigo to a DSC PowerSeries alarm system using one of the
 The plugin also maintains timers to keep track of how long any doors and windows have been opened, as well as how long it's been since it's seen activity in certain areas. These timers can be used to turn off the HVAC system if the wife is airing out the house, or turn off lights in areas of the house that aren't occupied.
 
 ## Information and Support
-Version 2022.0.1 with changes from Monstergerm has been released. This version is compatible with Python 2 (using Server API 2.0) or Python 3 (using Server API 3.0[default]). The plugin also adds a number of minor improvements over v2.2.2.
- Minor tweaks to code
- Removed outdated version check code
- Updated logging system to six levels
- Changed time sync routine and added Time Sync Action
- Added more zone attributes
- Implemented custom state GUI icons for Indigo desktop app and Indigo Touch
 
-Version 2.0 with changes from Monstergerm has been released.  Read the DSC plugin v2 Release Notes.pdf file for more information.
+**Current version: 2026.05.11.54** (Indigo 2026.1, Python 3). The full change history, release by release, is in [`ROADMAP.md`](DSC%20Alarm.indigoPlugin/ROADMAP.md) inside the plugin bundle.
+
+### Highlights since 2022.0.6
+
+- **Dual interfaces:** IT-100 (serial) and Envisalink (network) can be used together, with automatic failover and reconnection.
+- **Keypad label programming** over the IT-100: read, write and broadcast zone labels from Indigo.
+- **Accurate zone states:** a zone's state always reflects the live sensor (open/closed), so HomeKit, scenes and triggers never see a "latched" reading.
+- **Per-zone alarm memory**, matching the panel's own: `alarmState` is `normal`, `tripped` (in alarm now) or `memory` (was in alarm, since restored), and clears when the partition is next armed or with the **Clear Alarm Memory** action. Each keypad lists its zones in alarm memory.
+- **"Unavailable" when states can't be confirmed:** at startup until the panel has reported, while the plugin is shut down, and after a configurable time without a connection. On reconnect the plugin resyncs every zone with the panel. Events: **Panel Connection Lost / Restored**.
+- **Consistent zone icons** by zone type and state (flame for fire zones, motion icons, locks, red for tripped).
+- **Logging controls:** a global "log all zone changes" override and buttons to set every zone's Log Changes on or off.
+- Keypress actions accept installer sequences (`*8`), so the panel can be programmed from Indigo.
+
+### Zone device states (for control pages and triggers)
+
+| State | Values | Use it for |
+|---|---|---|
+| `onOffState` | live open/closed | HomeKit, triggers, automation |
+| `state` | `closed` / `open` / `openLatched` | live state (motion latch shown as `openLatched`) |
+| `alarmState` | `normal` / `tripped` / `memory` | which zones set off the alarm |
+| `alarmMemorySince` | timestamp | when the zone tripped |
+| `displayState` | `closed` / `open` / `tripped` / `memory` / `unavailable` | one combined value for control pages |
+
+> **Upgrading from an older version:** zones no longer use `tripped` as their main `state`. Triggers or control pages that checked for it should use `alarmState` or `displayState`. The old "Latch zones open while alarm is triggered" option has been replaced by these states.
+
+### Earlier history
+
+Version 2022.0.1 with changes from Monstergerm: compatible with Python 2 (Server API 2.0) or Python 3 (Server API 3.0, default), with minor tweaks, a six-level logging system, a Time Sync action, more zone attributes and custom state icons. Version 2.0, also with changes from Monstergerm: see the DSC plugin v2 Release Notes.
 
 For Installation and Information details please see this [forum post](http://forums.indigodomo.com/viewtopic.php?f=56&t=10287).
 
-If you need help, please post a topic in this  [user forum](http://forums.indigodomo.com/viewforum.php?f=56).
+If you need help, please post a topic in this [user forum](http://forums.indigodomo.com/viewforum.php?f=56).
 
 ## Downloading for use
 

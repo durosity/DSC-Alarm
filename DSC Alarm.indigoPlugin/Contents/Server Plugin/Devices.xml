@@ -1,7 +1,8 @@
 <?xml version="1.0"?>
 <Devices>
-	<Device type="custom" id="alarmZone">
+	<Device type="sensor" id="alarmZone">
 		<Name>Alarm Zone</Name>
+		<AllowOnStateChange>true</AllowOnStateChange>
 		<ConfigUI>			
 			<Field id="zoneNumber" type="menu">
 				<Label>Zone Number:</Label>
@@ -24,6 +25,7 @@
 					<Option value="zoneTypeGlass">Glass Break</Option>
 					<Option value="zoneTypeShock">Shock</Option>
 					<Option value="zoneTypeCO">Carbon Monoxide</Option>
+					<Option value="zoneTypeLock">Lock</Option>
 					<Option value="zoneTypeOther">Other</Option>
 				</List>
 			</Field>
@@ -57,22 +59,101 @@
 				<Label>Log Changes:</Label>
 				<Description></Description>
 			</Field>
+			
+			<Field id="space3" type="label">
+				<Label></Label>
+			</Field>
+			
+			<Field type="textfield" id="latchSeconds" defaultValue="0">
+				<Label>Latch Duration (seconds):</Label>
+				<Description>Keep sensor "on" for this many seconds after zone closes (0 = no latching)</Description>
+			</Field>
+			<Field id="latchHint" type="label" fontColor="darkgray" fontSize="small" alignWithControl="true">
+				<Label>Useful for motion sensors - keeps the sensor active for a period after motion stops.</Label>
+			</Field>
+
+			<!-- =============================================================
+			     IT-100 Keypad Label Programming (experimental)
+			     ============================================================= -->
+			<Field id="labelProgSep" type="separator"/>
+			<Field id="labelProgHeader" type="label" fontSize="regular">
+				<Label>IT-100 Keypad Label Programming (experimental):</Label>
+			</Field>
+			<Field id="labelProgIntro" type="label" fontSize="small" fontColor="darkgray" alignWithControl="false">
+				<Label>Writes a label to this zone's keypad slot by emulating physical keypresses through the IT-100. The installer code is configured in the plugin's main config (Plugins → DSC Alarm → Configure). ENVISALINK IS NOT SUPPORTED — TPI key commands lock out in installer mode and can dead-lock the panel. All partitions must be disarmed. Always run a dry-run first and check the log. The IT-100 has no physical display or beep — watch the keypad device's LCDLine1/LCDLine2 states (or a control page mapped to them) for feedback.</Label>
+			</Field>
+
+			<Field id="labelText" type="textfield" defaultValue="">
+				<Label>Label Text:</Label>
+			</Field>
+			<Field id="labelTextHint" type="label" fontColor="darkgray" fontSize="small" alignWithControl="true">
+				<Label>Up to 14 characters. Supports A-Z, a-z, 0-9 and space. Mixed case is OK — case-toggle keystrokes are inserted automatically where needed. Leave blank to default to this device's name.</Label>
+			</Field>
+
+			<Field id="labelReadButton" type="button">
+				<Label></Label>
+				<Title>Read Current Label from Panel</Title>
+				<CallbackMethod>readZoneLabelFromKeypad</CallbackMethod>
+			</Field>
+			<Field id="labelReadHint" type="label" fontColor="darkgray" fontSize="small" alignWithControl="true">
+				<Label>Briefly enters installer mode, reads the LCD, and saves the current zone label to the device. After the operation completes (~15s), click CANCEL on this dialog (NOT OK/Save), then reopen it — the Label Text field above will show the captured label. WARNING: clicking OK/Save after Read writes back this dialog's old value, undoing the read.</Label>
+			</Field>
+
+			<Field type="checkbox" id="labelPrefixZoneNumber" defaultValue="false">
+				<Label>Prefix with zone number:</Label>
+			</Field>
+			<Field id="labelPrefixZoneNumberHint" type="label" fontColor="darkgray" fontSize="small" alignWithControl="true">
+				<Label>If ticked, prepends the 2-digit zone number and a space to the label, e.g. zone 5 with label "Lounge" becomes "05 Lounge". Eats into the 14-char limit.</Label>
+			</Field>
+
+			<Field type="checkbox" id="labelConfirmedWrite" defaultValue="false">
+				<Label>I have read the above and want to write for real:</Label>
+			</Field>
+			<Field id="labelConfirmedHint" type="label" fontColor="darkgray" fontSize="small" alignWithControl="true">
+				<Label>Leave unticked for dry-run mode (logs every keystroke without sending). Tick to actually transmit when the button below is pressed.</Label>
+			</Field>
+
+			<Field id="labelWriteButton" type="button">
+				<Label></Label>
+				<Title>Write Device Label to IT-100 Virtual Keypad</Title>
+				<CallbackMethod>writeZoneLabelToKeypad</CallbackMethod>
+			</Field>
+
+			<Field id="labelStopButton" type="button">
+				<Label></Label>
+				<Title>STOP / Exit Installer Mode</Title>
+				<CallbackMethod>stopZoneLabelProgramming</CallbackMethod>
+			</Field>
+			<Field id="labelStopHint" type="label" fontColor="darkgray" fontSize="small" alignWithControl="true">
+				<Label>If something goes wrong mid-programming, press this to flush the queue and send '##' to back out of installer mode.</Label>
+			</Field>
 		</ConfigUI>
 		
-		<UiDisplayStateId>state</UiDisplayStateId>
+		<UiDisplayStateId>onOffState</UiDisplayStateId>
 		<States>
 			<State id="state">
 				<ValueType>
 					<List>
-						<Option value="open">Open</Option>
 						<Option value="closed">Closed</Option>
-						<Option value="tripped">Tripped</Option>						
+						<Option value="open">Open</Option>
+						<Option value="tripped">Tripped</Option>
+						<Option value="openLatched">Open (Latched)</Option>
 					</List>
 				</ValueType>
 				<TriggerLabel>Zone State Changed</TriggerLabel>
 				<TriggerLabelPrefix>Zone State Changed to</TriggerLabelPrefix>
 				<ControlPageLabel>Current State</ControlPageLabel>
 				<ControlPageLabelPrefix>State is</ControlPageLabelPrefix>
+			</State>
+			<State id="onState">
+				<ValueType>Boolean</ValueType>
+				<TriggerLabel>Sensor Activated</TriggerLabel>
+				<ControlPageLabel>Sensor Active</ControlPageLabel>
+			</State>
+			<State id="offState">
+				<ValueType>Boolean</ValueType>
+				<TriggerLabel>Sensor Deactivated</TriggerLabel>
+				<ControlPageLabel>Sensor Inactive</ControlPageLabel>
 			</State>
 			<State id="bypass">
 				<ValueType>
@@ -97,6 +178,49 @@
 				<TriggerLabelPrefix>Last Changed Timer Changed to</TriggerLabelPrefix>
 				<ControlPageLabel>Last Changed Timer (mins.)</ControlPageLabel>
         		<ControlPageLabelPrefix>Last Changed Timer is</ControlPageLabelPrefix>
+			</State>
+			<State id="latchTimer">
+				<ValueType>Integer</ValueType>
+				<TriggerLabel>Latch Timer Changed</TriggerLabel>
+				<ControlPageLabel>Latch Timer (seconds remaining)</ControlPageLabel>
+			</State>
+			<State id="displayText">
+				<ValueType>String</ValueType>
+				<TriggerLabel>Display Text Changed</TriggerLabel>
+				<ControlPageLabel>Display Text</ControlPageLabel>
+			</State>
+			<State id="alarmState">
+				<ValueType>
+					<List>
+						<Option value="normal">Normal</Option>
+						<Option value="tripped">Tripped (in alarm now)</Option>
+						<Option value="memory">Alarm Memory (was in alarm)</Option>
+					</List>
+				</ValueType>
+				<TriggerLabel>Alarm State Changed</TriggerLabel>
+				<TriggerLabelPrefix>Alarm State Changed to</TriggerLabelPrefix>
+				<ControlPageLabel>Alarm State</ControlPageLabel>
+				<ControlPageLabelPrefix>Alarm State is</ControlPageLabelPrefix>
+			</State>
+			<State id="alarmMemorySince">
+				<ValueType>String</ValueType>
+				<TriggerLabel>Alarm Memory Time Changed</TriggerLabel>
+				<ControlPageLabel>Alarm Memory Since</ControlPageLabel>
+			</State>
+			<State id="displayState">
+				<ValueType>
+					<List>
+						<Option value="closed">Closed</Option>
+						<Option value="open">Open</Option>
+						<Option value="tripped">Tripped</Option>
+						<Option value="memory">Alarm Memory</Option>
+						<Option value="unavailable">Unavailable</Option>
+					</List>
+				</ValueType>
+				<TriggerLabel>Display State Changed</TriggerLabel>
+				<TriggerLabelPrefix>Display State Changed to</TriggerLabelPrefix>
+				<ControlPageLabel>Display State</ControlPageLabel>
+				<ControlPageLabelPrefix>Display State is</ControlPageLabelPrefix>
 			</State>
 
 		</States>
@@ -158,6 +282,11 @@
 				<TriggerLabelPrefix>Panic State Changed to</TriggerLabelPrefix>
 				<ControlPageLabel>Current Panic State</ControlPageLabel>
 				<ControlPageLabelPrefix>Panic State is</ControlPageLabelPrefix>
+			</State>
+			<State id="alarmMemoryZones">
+				<ValueType>String</ValueType>
+				<TriggerLabel>Alarm Memory Zones Changed</TriggerLabel>
+				<ControlPageLabel>Alarm Memory Zones</ControlPageLabel>
 			</State>
 			<State id="ArmedState">
 				<ValueType>

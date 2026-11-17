@@ -86,6 +86,10 @@
         <Name>Alarm Panel Tripped (any partition) - zone violation, fire or panic</Name>
     </Event> 
 
+    <Event id="eventHistoricalAlarmDetected" deviceFilter="self.alarmKeypad">
+        <Name>Historical Alarm Detected on Startup - panel reports a past trip from while plugin was offline</Name>
+    </Event> 
+
     <Event id="eventZoneTripped" deviceFilter="self.alarmZone">
         <Name>Alarm Zone Tripped (any partition) - zone violation</Name>
     </Event> 
@@ -102,4 +106,12 @@
 		<Name>Notice - Telephone Ring Tone Detected</Name>
 	</Event>
 
+
+	<Event id="eventConnectionLost">
+		<Name>Panel Connection Lost (devices marked unavailable)</Name>
+	</Event>
+
+	<Event id="eventConnectionRestored">
+		<Name>Panel Connection Restored (devices available again)</Name>
+	</Event>
 </Events>

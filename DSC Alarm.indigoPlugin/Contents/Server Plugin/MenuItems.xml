@@ -1,9 +1,28 @@
 <?xml version="1.0"?>
 <MenuItems>
-<!-- 
-    <MenuItem id="menu1">
-        <Name>Check for Updates</Name>
-        <CallbackMethod>checkForUpdates</CallbackMethod>
-    </MenuItem>
- -->
+	<MenuItem id="menuPrintZoneStates">
+		<Name>Print Zone States to Log</Name>
+		<CallbackMethod>menuPrintZoneStates</CallbackMethod>
+	</MenuItem>
+	<MenuItem id="menuRequestPanelStatus">
+		<Name>Request Status from Panel</Name>
+		<CallbackMethod>menuRequestPanelStatus</CallbackMethod>
+	</MenuItem>
+	<MenuItem id="menuRefreshAndDumpStates">
+		<Name>Refresh Zone States from Panel</Name>
+		<CallbackMethod>menuRefreshAndDumpStates</CallbackMethod>
+	</MenuItem>
+	<MenuItem id="menuPrintStoredZoneLabels">
+		<Name>Print Stored Zone Labels to Log</Name>
+		<CallbackMethod>menuPrintStoredZoneLabels</CallbackMethod>
+	</MenuItem>
+	<!--
+	Hidden in v18 — useful recovery tool but a bit of a footgun for end users.
+	Uncomment to re-enable. The callback `menuShowStoredCredentials` is still
+	present in plugin.py.
+	<MenuItem id="menuShowStoredCredentials">
+		<Name>Show Stored Credentials in Log</Name>
+		<CallbackMethod>menuShowStoredCredentials</CallbackMethod>
+	</MenuItem>
+	-->
 </MenuItems>

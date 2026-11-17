@@ -6,16 +6,55 @@
 	<Action id="actionDisarm" deviceFilter="self.alarmKeypad">
 		<Name>Disarm Alarm</Name>
 		<CallbackMethod>methodDisarmAlarm</CallbackMethod>
+		<ConfigUI>
+			<Field type="menu" id="commandInterface" defaultValue="auto">
+				<Label>Send Via:</Label>
+				<List>
+					<Option value="auto">Auto (use plugin default)</Option>
+					<Option value="it100">IT-100</Option>
+					<Option value="envisalink">Envisalink</Option>
+				</List>
+			</Field>
+			<Field id="commandInterfaceHint" type="label" fontColor="darkgray" fontSize="small" alignWithControl="true">
+				<Label>Which interface to send this command via. Auto follows the plugin-wide preference and falls back if the chosen interface is down.</Label>
+			</Field>
+		</ConfigUI>
 	</Action>
 
 	<Action id="actionArmStay" deviceFilter="self.alarmKeypad">
 		<Name>Arm Alarm in Stay Mode</Name>
 		<CallbackMethod>methodArmStay</CallbackMethod>
+		<ConfigUI>
+			<Field type="menu" id="commandInterface" defaultValue="auto">
+				<Label>Send Via:</Label>
+				<List>
+					<Option value="auto">Auto (use plugin default)</Option>
+					<Option value="it100">IT-100</Option>
+					<Option value="envisalink">Envisalink</Option>
+				</List>
+			</Field>
+			<Field id="commandInterfaceHint" type="label" fontColor="darkgray" fontSize="small" alignWithControl="true">
+				<Label>Which interface to send this command via. Auto follows the plugin-wide preference and falls back if the chosen interface is down.</Label>
+			</Field>
+		</ConfigUI>
 	</Action>
 
 	<Action id="actionArmAway" deviceFilter="self.alarmKeypad">
 		<Name>Arm Alarm in Away Mode</Name>
 		<CallbackMethod>methodArmAway</CallbackMethod>
+		<ConfigUI>
+			<Field type="menu" id="commandInterface" defaultValue="auto">
+				<Label>Send Via:</Label>
+				<List>
+					<Option value="auto">Auto (use plugin default)</Option>
+					<Option value="it100">IT-100</Option>
+					<Option value="envisalink">Envisalink</Option>
+				</List>
+			</Field>
+			<Field id="commandInterfaceHint" type="label" fontColor="darkgray" fontSize="small" alignWithControl="true">
+				<Label>Which interface to send this command via. Auto follows the plugin-wide preference and falls back if the chosen interface is down.</Label>
+			</Field>
+		</ConfigUI>
 	</Action>
 
 	<Action id="actionArmStayForce" deviceFilter="self.alarmKeypad">
@@ -31,6 +70,19 @@
 	<Action id="actionArmGlobal" deviceFilter="self.alarmKeypad">
 		<Name>Arm Alarm in Away Global Mode</Name>
 		<CallbackMethod>methodArmGlobal</CallbackMethod>
+		<ConfigUI>
+			<Field type="menu" id="commandInterface" defaultValue="auto">
+				<Label>Send Via:</Label>
+				<List>
+					<Option value="auto">Auto (use plugin default)</Option>
+					<Option value="it100">IT-100</Option>
+					<Option value="envisalink">Envisalink</Option>
+				</List>
+			</Field>
+			<Field id="commandInterfaceHint" type="label" fontColor="darkgray" fontSize="small" alignWithControl="true">
+				<Label>Which interface to send this command via. Auto follows the plugin-wide preference and falls back if the chosen interface is down.</Label>
+			</Field>
+		</ConfigUI>
 	</Action>
 
 	<Action id="actionPanicAlarm" deviceFilter="self.alarmKeypad">
@@ -45,42 +97,82 @@
 					<Option value="1">Fire</Option>
 				</List>
 			</Field>
+			<Field type="menu" id="commandInterface" defaultValue="auto">
+				<Label>Send Via:</Label>
+				<List>
+					<Option value="auto">Auto (use plugin default)</Option>
+					<Option value="it100">IT-100</Option>
+					<Option value="envisalink">Envisalink</Option>
+				</List>
+			</Field>
+			<Field id="commandInterfaceHint" type="label" fontColor="darkgray" fontSize="small" alignWithControl="true">
+				<Label>Which interface to send this command via. Auto follows the plugin-wide preference and falls back if the chosen interface is down.</Label>
+			</Field>
 		</ConfigUI>
 	</Action>
 
 
 	<Action id="actionSendKeypress">
-		<Name>Send Single Keypress</Name>
+		<Name>Send Single Keypress – IT-100 only</Name>
 		<CallbackMethod>methodSendKeypress070</CallbackMethod>
 		<ConfigUI>
 			<Field type="textfield" id="keys">
-				<Label>Key To Press (for Partition 1 only):</Label>
+				<Label>Key(s) To Press:</Label>
 			</Field>
 			<Field id="space0" type="label"><Label/></Field>
-			<Field id="label1" type="label">
-				<Label>Special Keys (IT-100 only):</Label>
+			<Field id="labelHeader" type="label">
+				<Label>Type one or more keys. You can use raw characters OR bracketed tokens — mix and match.</Label>
 			</Field>
-			<Field id="label2" type="label">
-				<Label>     Displayed as: Actual Keypad Key (keypress code)</Label>
-			</Field>
-			<Field id="label3" type="label">
-				<Label>     Function Keys: 1(a), 2(b), 3(c), 4(d), 5(e)</Label>
-			</Field>
-			<Field id="label4" type="label">
-				<Label>     Arrow Keys: Left(&#8592;), Right(&#8594;), Both(&#8592;&#8594;)</Label>
-			</Field>
-			<Field id="label5" type="label">
-				<Label>     Panic Keys: Fire(F), Ambulance(A), Panic(P)</Label>
-			</Field>
-			<Field id="label6" type="label">
-				<Label>     Long Keypress: Key followed by L  e.g. '2L' to hold 2.</Label>
-			</Field>	
 			<Field id="space1" type="label"><Label/></Field>
-			<Field id="label8" type="label">
-				<Label>Example:</Label>
+			<Field id="labelTableHdr" type="label">
+				<Label>     Keypad key            Raw char     Bracketed token</Label>
 			</Field>
-			<Field id="label10" type="label">
-				<Label>     b236&#8594;  would press function key 2, digits 236, right arrow. Special keys will not work with Envisalink.</Label>
+			<Field id="labelRowDigits" type="label">
+				<Label>     Digits 0-9            0..9         (none needed)</Label>
+			</Field>
+			<Field id="labelRowStar" type="label">
+				<Label>     Star                  *            [STAR]</Label>
+			</Field>
+			<Field id="labelRowHash" type="label">
+				<Label>     Hash                  #            [HASH]</Label>
+			</Field>
+			<Field id="labelRowLeft" type="label">
+				<Label>     Left arrow            &lt;            [LEFT]</Label>
+			</Field>
+			<Field id="labelRowRight" type="label">
+				<Label>     Right arrow           &gt;            [RIGHT]</Label>
+			</Field>
+			<Field id="labelRowBoth" type="label">
+				<Label>     Both arrows           =            [BOTH]</Label>
+			</Field>
+			<Field id="labelRowF" type="label">
+				<Label>     F1, F2, F3, F4, F5    a, b, c, d, e   [F1]..[F5]</Label>
+			</Field>
+			<Field id="labelRowEmerg" type="label">
+				<Label>     Fire / Aux / Panic    F / A / P    [FIRE] [AUX] [PANIC]</Label>
+			</Field>
+			<Field id="labelRowWait" type="label">
+				<Label>     Pause 2 seconds       L            [WAIT]</Label>
+			</Field>
+			<Field id="space2" type="label"><Label/></Field>
+			<Field id="labelExamples" type="label">
+				<Label>Examples:</Label>
+			</Field>
+			<Field id="labelEx1" type="label">
+				<Label>     *2          press star, then 2 (trouble check)</Label>
+			</Field>
+			<Field id="labelEx2" type="label">
+				<Label>     [STAR]2     same as above, using a token</Label>
+			</Field>
+			<Field id="labelEx3" type="label">
+				<Label>     b236&gt;       press F2, digits 2/3/6, then right arrow</Label>
+			</Field>
+			<Field id="labelEx4" type="label">
+				<Label>     [F2]236[RIGHT]   same as above, using tokens</Label>
+			</Field>
+			<Field id="space3" type="label"><Label/></Field>
+			<Field id="labelNote" type="label" fontColor="darkgray" fontSize="small">
+				<Label>Whitespace between keys is ignored. TPI command 070 is IT-100 only; this action will not work via Envisalink. Use 'Send Multiple Keypresses – EVL only' for Envisalink-based keystrokes.</Label>
 			</Field>
 		</ConfigUI>
 	</Action>
@@ -162,6 +254,17 @@
 			<Field id="label2" type="label">
 				<Label>NOTE: After executing this action it will take up to 4 minutes for the new time to be reflected on your alarm keypads.</Label>
 			</Field>
+			<Field type="menu" id="commandInterface" defaultValue="auto">
+				<Label>Send Via:</Label>
+				<List>
+					<Option value="auto">Auto (use plugin default)</Option>
+					<Option value="it100">IT-100</Option>
+					<Option value="envisalink">Envisalink</Option>
+				</List>
+			</Field>
+			<Field id="commandInterfaceHint" type="label" fontColor="darkgray" fontSize="small" alignWithControl="true">
+				<Label>Which interface to send this command via. Auto follows the plugin-wide preference and falls back if the chosen interface is down.</Label>
+			</Field>
 		</ConfigUI>
 	</Action>
 
@@ -196,6 +299,209 @@
 	<CallbackMethod>methodResetZoneGroupTimer</CallbackMethod>
 </Action>
 
+<Action id="actionReadAllZoneLabels">
+	<Name>Read All Zone Labels from Panel</Name>
+	<CallbackMethod>methodReadAllZoneLabels</CallbackMethod>
+	<ConfigUI>
+		<Field id="intro" type="label" fontSize="small" fontColor="darkgray">
+			<Label>Reads the label for every configured zone device from the panel and saves each one to its device's 'Label Text' property, OVERWRITING any existing value. Useful for the initial bulk-sync when zones have been reconfigured but the panel's stored labels are stale. Runs in the background — does NOT block this dialog. Briefly enters installer mode for each zone (~15-20s per zone), so a system with 40 zones takes ~10-15 minutes. ENVISALINK IS NOT SUPPORTED — IT-100 only. All partitions must be disarmed for the entire duration. The installer code must be configured in the plugin's main config. Watch the event log for progress.</Label>
+		</Field>
+		<Field id="retryPasses" type="textfield" defaultValue="2">
+			<Label>Retry Passes:</Label>
+		</Field>
+		<Field id="retryPassesHint" type="label" fontColor="darkgray" fontSize="small" alignWithControl="true">
+			<Label>Number of extra passes over failed zones after the initial pass. 0 disables retry entirely. Recommended: 2 (gives 3 total attempts per zone). Range: 0-5.</Label>
+		</Field>
+		<Field id="interPassDelaySeconds" type="textfield" defaultValue="15">
+			<Label>Inter-Pass Delay (seconds):</Label>
+		</Field>
+		<Field id="interPassDelaySecondsHint" type="label" fontColor="darkgray" fontSize="small" alignWithControl="true">
+			<Label>How long to wait between passes for the panel to fully recover from installer mode before retrying failed zones. Recommended: 15-30 seconds. Range: 0-120.</Label>
+		</Field>
+		<Field id="interZoneDelaySeconds" type="textfield" defaultValue="5">
+			<Label>Inter-Zone Delay (seconds):</Label>
+		</Field>
+		<Field id="interZoneDelaySecondsHint" type="label" fontColor="darkgray" fontSize="small" alignWithControl="true">
+			<Label>How long to wait between zones within a single pass. Letting the panel settle reduces the rate of stage 1 timeouts. Recommended: 3-10 seconds. Range: 0-30.</Label>
+		</Field>
+	</ConfigUI>
+</Action>
+
+<Action id="actionReadEmptyZoneLabels">
+	<Name>Read Only Empty Zone Labels from Panel</Name>
+	<CallbackMethod>methodReadEmptyZoneLabels</CallbackMethod>
+	<ConfigUI>
+		<Field id="intro" type="label" fontSize="small" fontColor="darkgray">
+			<Label>Same as 'Read All Zone Labels' but only reads zones whose 'Label Text' field is currently empty. Lets you re-run after manually editing some labels without overwriting your edits. Runs in the background — does NOT block this dialog. Briefly enters installer mode for each unpopulated zone (~15-20s each). ENVISALINK IS NOT SUPPORTED — IT-100 only. All partitions must be disarmed for the entire duration. The installer code must be configured in the plugin's main config. Watch the event log for progress.</Label>
+		</Field>
+		<Field id="retryPasses" type="textfield" defaultValue="2">
+			<Label>Retry Passes:</Label>
+		</Field>
+		<Field id="retryPassesHint" type="label" fontColor="darkgray" fontSize="small" alignWithControl="true">
+			<Label>Number of extra passes over failed zones after the initial pass. 0 disables retry entirely. Recommended: 2 (gives 3 total attempts per zone). Range: 0-5.</Label>
+		</Field>
+		<Field id="interPassDelaySeconds" type="textfield" defaultValue="15">
+			<Label>Inter-Pass Delay (seconds):</Label>
+		</Field>
+		<Field id="interPassDelaySecondsHint" type="label" fontColor="darkgray" fontSize="small" alignWithControl="true">
+			<Label>How long to wait between passes for the panel to fully recover from installer mode before retrying failed zones. Recommended: 15-30 seconds. Range: 0-120.</Label>
+		</Field>
+		<Field id="interZoneDelaySeconds" type="textfield" defaultValue="5">
+			<Label>Inter-Zone Delay (seconds):</Label>
+		</Field>
+		<Field id="interZoneDelaySecondsHint" type="label" fontColor="darkgray" fontSize="small" alignWithControl="true">
+			<Label>How long to wait between zones within a single pass. Letting the panel settle reduces the rate of stage 1 timeouts. Recommended: 3-10 seconds. Range: 0-30.</Label>
+		</Field>
+	</ConfigUI>
+</Action>
+
+<Action id="actionReadSpecificZoneLabels">
+	<Name>Read Specific Zone Labels from Panel</Name>
+	<CallbackMethod>methodReadSpecificZoneLabels</CallbackMethod>
+	<ConfigUI>
+		<Field id="intro" type="label" fontSize="small" fontColor="darkgray">
+			<Label>Reads the labels for the specified zones from the panel and saves each one to its device's 'Label Text' property, OVERWRITING any existing value. Useful for picking up a handful of specific zones without re-reading the whole panel. Runs in the background — does NOT block this dialog. Briefly enters installer mode for each zone (~15-20s per zone). ENVISALINK IS NOT SUPPORTED — IT-100 only. All partitions must be disarmed for the entire duration. The installer code must be configured in the plugin's main config.</Label>
+		</Field>
+		<Field id="zoneList" type="textfield" defaultValue="">
+			<Label>Zone List:</Label>
+		</Field>
+		<Field id="zoneListHint" type="label" fontColor="darkgray" fontSize="small" alignWithControl="true">
+			<Label>Comma-separated zone numbers and/or ranges. Examples: "5" or "1,3,5,7" or "1-10" or "1,3,5-10,15". Zones must be 1-64. Any zone that doesn't have a configured Indigo device is silently skipped.</Label>
+		</Field>
+		<Field id="retryPasses" type="textfield" defaultValue="2">
+			<Label>Retry Passes:</Label>
+		</Field>
+		<Field id="retryPassesHint" type="label" fontColor="darkgray" fontSize="small" alignWithControl="true">
+			<Label>Number of extra passes over failed zones after the initial pass. 0 disables retry entirely. Recommended: 2 (gives 3 total attempts per zone). Range: 0-5.</Label>
+		</Field>
+		<Field id="interPassDelaySeconds" type="textfield" defaultValue="15">
+			<Label>Inter-Pass Delay (seconds):</Label>
+		</Field>
+		<Field id="interPassDelaySecondsHint" type="label" fontColor="darkgray" fontSize="small" alignWithControl="true">
+			<Label>How long to wait between passes for the panel to fully recover from installer mode before retrying failed zones. Recommended: 15-30 seconds. Range: 0-120.</Label>
+		</Field>
+		<Field id="interZoneDelaySeconds" type="textfield" defaultValue="5">
+			<Label>Inter-Zone Delay (seconds):</Label>
+		</Field>
+		<Field id="interZoneDelaySecondsHint" type="label" fontColor="darkgray" fontSize="small" alignWithControl="true">
+			<Label>How long to wait between zones within a single pass. Letting the panel settle reduces the rate of stage 1 timeouts. Recommended: 3-10 seconds. Range: 0-30.</Label>
+		</Field>
+	</ConfigUI>
+</Action>
+
+<Action id="actionBroadcastLabels">
+	<Name>Broadcast Labels to All Keypads (Section 998)</Name>
+	<CallbackMethod>methodBroadcastLabels</CallbackMethod>
+	<ConfigUI>
+		<Field id="intro" type="label" fontSize="small" fontColor="darkgray">
+			<Label>Enters installer mode and triggers DSC section 998, which broadcasts the labels stored on this keypad to every other PK5500 keypad on the system. Useful after writing labels via this plugin so all keypads in the house show the updated text. Takes ~30-90 seconds depending on how many keypads are on the bus. ENVISALINK IS NOT SUPPORTED — IT-100 only. All partitions must be disarmed for the duration. The installer code must be configured in the plugin's main config. NOTE: if running this immediately after a label write, wait ~30 seconds first — the panel transiently shows 'System is Unavailable' while it recovers from installer programming, and starting the broadcast during that window can fail.</Label>
+		</Field>
+	</ConfigUI>
+</Action>
+
+<Action id="actionWriteAllZoneLabels">
+	<Name>Write All Zone Labels to Panel</Name>
+	<CallbackMethod>methodWriteAllZoneLabels</CallbackMethod>
+	<ConfigUI>
+		<Field id="intro" type="label" fontSize="small" fontColor="darkgray">
+			<Label>Writes the label for EVERY configured zone device to the panel, OVERWRITING whatever the panel currently has. Each zone takes ~60-90 seconds due to per-character LCD verification, so a system with 40 zones takes 40-60 MINUTES. Long-running. ENVISALINK IS NOT SUPPORTED — IT-100 only. All partitions must be disarmed for the entire duration. The installer code must be configured in the plugin's main config. After it finishes you'll usually want to run 'Broadcast Labels to All Keypads' to push the changes to all keypads. Watch the event log for progress.</Label>
+		</Field>
+		<Field id="retryPasses" type="textfield" defaultValue="2">
+			<Label>Retry Passes:</Label>
+		</Field>
+		<Field id="retryPassesHint" type="label" fontColor="darkgray" fontSize="small" alignWithControl="true">
+			<Label>Number of extra passes over failed zones after the initial pass. 0 disables retry entirely. Recommended: 2 (gives 3 total attempts per zone). Range: 0-5.</Label>
+		</Field>
+		<Field id="interPassDelaySeconds" type="textfield" defaultValue="15">
+			<Label>Inter-Pass Delay (seconds):</Label>
+		</Field>
+		<Field id="interPassDelaySecondsHint" type="label" fontColor="darkgray" fontSize="small" alignWithControl="true">
+			<Label>How long to wait between passes for the panel to fully recover from installer mode before retrying failed zones. Recommended: 15-30 seconds. Range: 0-120.</Label>
+		</Field>
+		<Field id="interZoneDelaySeconds" type="textfield" defaultValue="5">
+			<Label>Inter-Zone Delay (seconds):</Label>
+		</Field>
+		<Field id="interZoneDelaySecondsHint" type="label" fontColor="darkgray" fontSize="small" alignWithControl="true">
+			<Label>How long to wait between zones within a single pass. Letting the panel settle reduces the rate of stage 1 timeouts. Recommended: 3-10 seconds. Range: 0-30.</Label>
+		</Field>
+	</ConfigUI>
+</Action>
+
+<Action id="actionWriteSpecificZoneLabels">
+	<Name>Write Specific Zone Labels to Panel</Name>
+	<CallbackMethod>methodWriteSpecificZoneLabels</CallbackMethod>
+	<ConfigUI>
+		<Field id="intro" type="label" fontSize="small" fontColor="darkgray">
+			<Label>Writes the labels for the specified zones to the panel. Each zone takes ~60-90 seconds due to per-character LCD verification, so 10 zones takes ~10-15 minutes. ENVISALINK IS NOT SUPPORTED — IT-100 only. All partitions must be disarmed for the entire duration.</Label>
+		</Field>
+		<Field id="zoneList" type="textfield" defaultValue="">
+			<Label>Zone List:</Label>
+		</Field>
+		<Field id="zoneListHint" type="label" fontColor="darkgray" fontSize="small" alignWithControl="true">
+			<Label>Comma-separated zone numbers and/or ranges. Examples: "5" or "1,3,5,7" or "1-10" or "1,3,5-10,15". Zones must be 1-64. Any zone that doesn't have a configured Indigo device is silently skipped.</Label>
+		</Field>
+		<Field id="retryPasses" type="textfield" defaultValue="2">
+			<Label>Retry Passes:</Label>
+		</Field>
+		<Field id="retryPassesHint" type="label" fontColor="darkgray" fontSize="small" alignWithControl="true">
+			<Label>Number of extra passes over failed zones after the initial pass. 0 disables retry entirely. Recommended: 2 (gives 3 total attempts per zone). Range: 0-5.</Label>
+		</Field>
+		<Field id="interPassDelaySeconds" type="textfield" defaultValue="15">
+			<Label>Inter-Pass Delay (seconds):</Label>
+		</Field>
+		<Field id="interPassDelaySecondsHint" type="label" fontColor="darkgray" fontSize="small" alignWithControl="true">
+			<Label>How long to wait between passes for the panel to fully recover from installer mode before retrying failed zones. Recommended: 15-30 seconds. Range: 0-120.</Label>
+		</Field>
+		<Field id="interZoneDelaySeconds" type="textfield" defaultValue="5">
+			<Label>Inter-Zone Delay (seconds):</Label>
+		</Field>
+		<Field id="interZoneDelaySecondsHint" type="label" fontColor="darkgray" fontSize="small" alignWithControl="true">
+			<Label>How long to wait between zones within a single pass. Letting the panel settle reduces the rate of stage 1 timeouts. Recommended: 3-10 seconds. Range: 0-30.</Label>
+		</Field>
+	</ConfigUI>
+</Action>
+
+<Action id="actionWriteChangedZoneLabels">
+	<Name>Write Changed Zone Labels to Panel</Name>
+	<CallbackMethod>methodWriteChangedZoneLabels</CallbackMethod>
+	<ConfigUI>
+		<Field id="intro" type="label" fontSize="small" fontColor="darkgray">
+			<Label>Writes only zones whose 'Label Text' field has been edited since the last successful read or write. Uses a per-device 'lastSyncedLabelText' tracking property updated automatically when a read or write succeeds. Zones that have never been read/written are SKIPPED — do an initial sync via 'Read All Zone Labels' or 'Write All Zone Labels' first. Each zone takes ~60-90 seconds due to per-character LCD verification. ENVISALINK IS NOT SUPPORTED — IT-100 only. All partitions must be disarmed for the entire duration.</Label>
+		</Field>
+		<Field id="retryPasses" type="textfield" defaultValue="2">
+			<Label>Retry Passes:</Label>
+		</Field>
+		<Field id="retryPassesHint" type="label" fontColor="darkgray" fontSize="small" alignWithControl="true">
+			<Label>Number of extra passes over failed zones after the initial pass. 0 disables retry entirely. Recommended: 2 (gives 3 total attempts per zone). Range: 0-5.</Label>
+		</Field>
+		<Field id="interPassDelaySeconds" type="textfield" defaultValue="15">
+			<Label>Inter-Pass Delay (seconds):</Label>
+		</Field>
+		<Field id="interPassDelaySecondsHint" type="label" fontColor="darkgray" fontSize="small" alignWithControl="true">
+			<Label>How long to wait between passes for the panel to fully recover from installer mode before retrying failed zones. Recommended: 15-30 seconds. Range: 0-120.</Label>
+		</Field>
+		<Field id="interZoneDelaySeconds" type="textfield" defaultValue="5">
+			<Label>Inter-Zone Delay (seconds):</Label>
+		</Field>
+		<Field id="interZoneDelaySecondsHint" type="label" fontColor="darkgray" fontSize="small" alignWithControl="true">
+			<Label>How long to wait between zones within a single pass. Letting the panel settle reduces the rate of stage 1 timeouts. Recommended: 3-10 seconds. Range: 0-30.</Label>
+		</Field>
+	</ConfigUI>
+</Action>
+
+<Action id="actionCancelBulkOperation">
+	<Name>Cancel Bulk Label Operation</Name>
+	<CallbackMethod>methodCancelBulkOperation</CallbackMethod>
+	<ConfigUI>
+		<Field id="intro" type="label" fontSize="small" fontColor="darkgray">
+			<Label>Requests that the currently-running bulk label operation (Read All, Read Empty, Write All, Write Specific, Write Changed) stop cleanly. The worker checks the cancel flag BETWEEN zones, so it can take up to ~90 seconds to honour the request (it lets the currently-in-progress zone finish first). The bulk operation will log that it was cancelled and how many zones it completed before stopping. Has no effect if no bulk operation is running. NOTE: 'Broadcast Labels' CANNOT be cancelled — once section 998 is sent the panel is broadcasting autonomously on the keybus and doesn't accept interruption.</Label>
+		</Field>
+	</ConfigUI>
+</Action>
+
+
+	<Action id="actionClearAlarmMemory">
+		<Name>Clear Alarm Memory (all zones)</Name>
+		<CallbackMethod>methodClearAlarmMemory</CallbackMethod>
+	</Action>
 </Actions>
-
-

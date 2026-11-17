@@ -3,53 +3,108 @@
     <SupportURL>https://github.com/IndigoDomotics/DSC-Alarm</SupportURL>
 
 	<Field id="infoLabel" type="label">
-		<Label>DSC Alarm Plugin:   Developed by Travis Cook; modified by Monstergerm</Label>
+		<Label>DSC Alarm 2:   Developed by Travis Cook; modified by Monstergerm and Durosity</Label>
 	</Field>
     <Field id="simpleSeparator1" type="separator"/>
 
-	<Field type="menu" id="configInterface" defaultValue="twods">
-		<Label>Select your Interface:</Label>
-		<List>
-			<Option value="serial">IT-100 or PC-5401</Option>
-			<Option value="twods">Envisalink 2DS, 3 or 4</Option>
-		</List>
+	<Field id="interfaceHeader" type="label" fontSize="small" fontColor="darkGray">
+		<Label>CONNECTION INTERFACES (Select one or both):</Label>
 	</Field>
 
-	<!-- serial port specific settings -->
-	<Field type="menu" id="serialPort" visibleBindingId="configInterface" visibleBindingValue="serial">
+	<!-- IT-100 Interface -->
+	<Field type="checkbox" id="enableIT100" defaultValue="false">
+		<Label>Enable IT-100 (Serial):</Label>
+		<Description>Connect via IT-100 serial interface</Description>
+	</Field>
+	
+	<Field type="menu" id="serialPort" visibleBindingId="enableIT100" visibleBindingValue="true">
 		<Label>Serial Port:</Label>
 		<List class="indigo.serialPorts" filter="indigo.ignoreBluetooth" />
 	</Field>
 
-	<!-- Password specific settings -->
+	<Field id="testIT100Button" type="button" visibleBindingId="enableIT100" visibleBindingValue="true">
+		<Label></Label>
+		<Title>Test IT-100 Connection</Title>
+		<CallbackMethod>testIT100Connection</CallbackMethod>
+	</Field>
 
-	<Field id="TwoDS_Address" type="textfield" visibleBindingId="configInterface" visibleBindingValue="twods">
+	<Field id="space_it100" type="label" visibleBindingId="enableIT100" visibleBindingValue="true">
+		<Label></Label>
+	</Field>
+
+	<!-- Envisalink Interface -->
+	<Field type="checkbox" id="enableEnvisalink" defaultValue="true">
+		<Label>Enable Envisalink (Network):</Label>
+		<Description>Connect via Envisalink network interface</Description>
+	</Field>
+
+	<Field id="TwoDS_Address" type="textfield" visibleBindingId="enableEnvisalink" visibleBindingValue="true">
 		<Label>IP Address:</Label>
 	</Field>
-	<Field id="TwoDS_AddressLabel" type="label" visibleBindingId="configInterface" visibleBindingValue="twods" fontColor="darkgray" fontSize="small" alignWithControl="true">
+	<Field id="TwoDS_AddressLabel" type="label" visibleBindingId="enableEnvisalink" visibleBindingValue="true" fontColor="darkgray" fontSize="small" alignWithControl="true">
 		<Label>(i.e. envisalink or 192.168.1.50; fixed IP is preferred)</Label>
 	</Field>
 
-	<Field id="TwoDS_Port" type="textfield" visibleBindingId="configInterface" visibleBindingValue="twods" defaultValue="4025">
+	<Field id="TwoDS_Port" type="textfield" visibleBindingId="enableEnvisalink" visibleBindingValue="true" defaultValue="4025">
 		<Label>Port:</Label>
 	</Field>
-	<Field id="TwoDS_PortLabel" type="label" visibleBindingId="configInterface" visibleBindingValue="twods" fontColor="darkgray" fontSize="small" alignWithControl="true">
+	<Field id="TwoDS_PortLabel" type="label" visibleBindingId="enableEnvisalink" visibleBindingValue="true" fontColor="darkgray" fontSize="small" alignWithControl="true">
 		<Label>(default port number = 4025)</Label>
 	</Field>
 
-	<Field id="TwoDS_Password" type="textfield" visibleBindingId="configInterface" visibleBindingValue="twods" secure="true">
+	<Field id="TwoDS_Password" type="textfield" visibleBindingId="enableEnvisalink" visibleBindingValue="true" secure="true">
 		<Label>Password:</Label>
 	</Field>
-	<Field id="snmpCommunityLabel" type="label" visibleBindingId="configInterface" visibleBindingValue="twods" fontColor="darkgray" fontSize="small" alignWithControl="true">
+	<Field id="snmpCommunityLabel" type="label" visibleBindingId="enableEnvisalink" visibleBindingValue="true" fontColor="darkgray" fontSize="small" alignWithControl="true">
 		<Label>(default = user; max. 6 ASCII digits; except EVL-4 allows 10 digits)</Label>
 	</Field>
 
+	<Field id="testEnvisalinkButton" type="button" visibleBindingId="enableEnvisalink" visibleBindingValue="true">
+		<Label></Label>
+		<Title>Test Envisalink Connection</Title>
+		<CallbackMethod>testEnvisalinkConnection</CallbackMethod>
+	</Field>
+
+	<Field id="space1" type="label">
+		<Label></Label>
+	</Field>
+
+	<!-- Command Interface Selection -->
+	<Field type="menu" id="commandInterface" defaultValue="envisalink">
+		<Label>Send Commands Via:</Label>
+		<List>
+			<Option value="envisalink">Envisalink</Option>
+			<Option value="it100">IT-100</Option>
+		</List>
+	</Field>
+	<Field id="commandInterfaceHint" type="label" fontColor="darkgray" fontSize="small" alignWithControl="true">
+		<Label>Both interfaces receive panel updates simultaneously. This setting only affects which interface is used to send commands (arm, disarm, etc.). If the selected interface is unavailable, the other is used as fallback.</Label>
+	</Field>
 
 	<Field id="code" type="textfield" defaultValue="1234" secure="true">
 		<Label>Disarm Code:</Label>
 	</Field>
 	<Field id="codeLabel" type="label" visibleBindingId="code" fontColor="darkgray" fontSize="small" alignWithControl="true">
 		<Label>This can be a 4-6 digit passcode unique for Indigo Users, as long as it is programmed into the DSC panel.</Label>
+	</Field>
+
+	<!-- =============================================================
+	     Installer code (for IT-100 keypad label programming)
+	     ============================================================= -->
+	<Field id="installerCode" type="textfield" defaultValue="" secure="true">
+		<Label>Installer Code:</Label>
+	</Field>
+	<Field id="installerCodeLabel" type="label" fontColor="darkgray" fontSize="small" alignWithControl="true">
+		<Label>4-6 digit installer code (factory default is usually 5555). Only used by the "Write Device Label to IT-100 Virtual Keypad" button on individual zone devices. Leave blank if you don't intend to use that feature.</Label>
+	</Field>
+
+	<Field id="testInstallerCodeButton" type="button">
+		<Label></Label>
+		<Title>Test Installer Code</Title>
+		<CallbackMethod>testInstallerCode</CallbackMethod>
+	</Field>
+	<Field id="testInstallerCodeHint" type="label" fontColor="darkgray" fontSize="small" alignWithControl="true">
+		<Label>Sends *8 + the installer code above, waits briefly, then sends ## to exit. Watch a physical keypad: it should briefly show "Enter Section" then return to normal. Requires IT-100 connected; will not run via Envisalink.</Label>
 	</Field>
 
 	<Field
@@ -144,6 +199,75 @@
 	</Field>
 		<Field id="customStateNote" type="label" visibleBindingId="customStateIcons" visibleBindingValue="true" fontColor="darkgray" fontSize="small" alignWithControl="true">
 		<Label>Indigo client UI and Indigo Touch will show custom state image icons for alarm zones.</Label>
+	</Field>
+
+	<Field id="separatorHistoricalAlarm" type="separator"/>
+
+	<Field id="zoneAlarmHeader" type="label" fontSize="small" fontColor="darkGray">
+		<Label>Zone Behaviour During Alarm</Label>
+	</Field>
+	<Field id="zoneAlarmNote" type="label" fontColor="darkgray" fontSize="small">
+		<Label>Zones always show their live open/closed state. When a zone sets off the alarm, its separate 'alarmState' becomes 'tripped', then 'memory' once the panel reports it restored, and returns to 'normal' when its partition is next armed (or with the 'Clear Alarm Memory' action). The State column, icon and 'displayState' show the combined picture. (This replaces the old 'Latch zones open while alarm is triggered' option.)</Label>
+	</Field>
+
+	<Field id="separatorZoneLatch" type="separator"/>
+
+	<Field id="unavailableHeading" type="label" fontColor="black">
+		<Label>Panel Connection Loss</Label>
+	</Field>
+	<Field id="unavailableGraceSeconds" type="textfield" defaultValue="30">
+		<Label>Mark devices unavailable after (seconds):</Label>
+	</Field>
+	<Field id="unavailableGraceNote" type="label" fontColor="darkgray" fontSize="small" alignWithControl="true">
+		<Label>If no interface (IT-100 or Envisalink) has been connected for this long, every zone, keypad and zone group is shown as "unavailable" so stale states can't be mistaken for real ones. Last known states are kept. On reconnect the plugin requests a full status report from the panel and clears the marking once it has been processed. Minimum 5 seconds; brief reconnects shorter than this are ignored.</Label>
+	</Field>
+
+	<Field id="separatorUnavailable" type="separator"/>
+
+	<Field id="loggingHeader" type="label" fontSize="small" fontColor="darkGray">
+		<Label>Logging</Label>
+	</Field>
+
+	<Field id="logAllZoneChanges" type="checkbox" defaultValue="false">
+		<Label>Log all zone state changes (override per-device setting):</Label>
+	</Field>
+	<Field id="logAllZoneChangesNote" type="label" fontColor="darkgray" fontSize="small" alignWithControl="true">
+		<Label>When checked, every zone open/close is logged to the event log regardless of the per-zone 'Log Changes' checkbox in each zone device's config. Useful for diagnostics when you need a complete picture without re-ticking every device. Uncheck to honour each zone's individual setting.</Label>
+	</Field>
+	<Field id="setAllZonesLogChanges" type="button">
+		<Label>Individual zone devices:</Label>
+		<Title>Set all to log changes</Title>
+		<CallbackMethod>buttonSetAllZonesLogChanges</CallbackMethod>
+	</Field>
+	<Field id="clearAllZonesLogChanges" type="button">
+		<Title>Set all to not log changes</Title>
+		<CallbackMethod>buttonClearAllZonesLogChanges</CallbackMethod>
+	</Field>
+	<Field id="logButtonsNote" type="label" fontColor="darkgray" fontSize="small" alignWithControl="true">
+		<Label>These buttons change the 'Log Changes' checkbox on every zone device straight away — clicking Cancel on this dialog afterwards does not undo them.</Label>
+	</Field>
+
+	<Field id="separatorLogging" type="separator"/>
+
+	<Field id="historicalAlarmHeader" type="label" fontSize="small" fontColor="darkGray">
+		<Label>Startup / Missed Alarm Handling</Label>
+	</Field>
+	<Field id="historicalAlarmIntro" type="label" fontColor="darkgray" fontSize="small" alignWithControl="false">
+		<Label>If Indigo is offline (or the plugin is restarted) while the alarm trips, the plugin can miss the cmd 654 broadcast. When the plugin comes back up, the panel may replay alarm-memory broadcasts that LOOK like a fresh trip — but the alarm is already over. These settings control how that's handled.</Label>
+	</Field>
+
+	<Field id="startupAlertOnHistoricalAlarm" type="checkbox" defaultValue="true">
+		<Label>Alert on detected historical alarm:</Label>
+	</Field>
+	<Field id="startupAlertOnHistoricalAlarmNote" type="label" fontColor="darkgray" fontSize="small" alignWithControl="true">
+		<Label>If checked, the plugin will fire the 'Historical Alarm Detected' trigger AND send an urgent email (using the same recipient as the regular alarm email) when it determines a trip happened while it was offline. The notification is clearly labelled as historical so you can tell it apart from a live alarm. Uncheck to suppress these notifications entirely (the trip will still be logged to the event log either way).</Label>
+	</Field>
+
+	<Field id="startupGracePeriodSeconds" type="textfield" defaultValue="120">
+		<Label>Startup grace period (seconds):</Label>
+	</Field>
+	<Field id="startupGracePeriodSecondsNote" type="label" fontColor="darkgray" fontSize="small" alignWithControl="true">
+		<Label>How long after plugin startup to treat cmd 654 broadcasts on partitions currently showing ready/disarmed as historical-alarm replays. Recommended: 120 (two minutes — covers normal panel re-broadcast windows). Set to 0 to disable historical-alarm detection entirely (every cmd 654 will be treated as a fresh live trip). Range: 0-600.</Label>
 	</Field>
 
 	<Field
@@ -294,6 +418,13 @@
     </Field>            
 	<Field id="midLabel" type="label" fontColor="darkgray" fontSize="small" alignWithControl="true">
 		<Label>Set the level of information recorded to the Indigo log.</Label>
+	</Field>
+
+	<Field type="checkbox" id="debugInterfaceSource" defaultValue="true">
+		<Label>Log Interface Source:</Label>
+	</Field>
+	<Field id="debugInterfaceSourceHint" type="label" fontColor="darkgray" fontSize="small" alignWithControl="true">
+		<Label>When enabled, logs which interface (IT-100 or Envisalink) delivered each panel message, and when duplicates are suppressed.</Label>
 	</Field>
 
 
